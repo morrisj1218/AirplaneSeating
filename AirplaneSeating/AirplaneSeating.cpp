@@ -1,12 +1,288 @@
 // AirplaneSeating.cpp : This file contains the 'main' function. Program execution begins and ends there.
-//
+// Programmer:		Jack Morris
+// Course:			ITSE-xxxx Intro to C++
+// Description:		
+// Date:			30/30/2019
 
 #include "pch.h"
 #include <iostream>
+#include <iomanip>
+#include <cctype>
+
+using namespace std;
+
+const int MAX_ROWS = 13;
+const int MAX_COLS = 6;
+
+void print_Aircraft_Layout(const char letters[], const char matrix[][MAX_COLS], int MAX_ROWS); // Outputs CURRENT seating chart
+void reserve_Seats(const char letters[], char matrix[][MAX_COLS], int MAX_ROWS);
+void main_Menu();
+void reserve_Menu();
+int seqSearch(const char list[], int length, char searchItem);
 
 int main()
 {
-    std::cout << "Hello World!\n"; 
+	int choice;
+	char aircraft_Layout[MAX_ROWS][MAX_COLS];
+	char seatLetters[MAX_COLS] = { 'A','B','C','D','E','F' };
+	char available = '*';
+
+	for (int row = 0; row < MAX_ROWS; row++) // Initialize aircraft_Layout with all seats empty
+	{
+		for (int col = 0; col < MAX_COLS; col++)
+		{
+			aircraft_Layout[row][col] = available;
+		}
+	}
+
+	do
+	{
+		main_Menu();
+		cin >> choice;
+		cout << endl;
+
+		switch (choice)
+		{
+			case 1: // Show current seating chart
+			print_Aircraft_Layout(seatLetters, aircraft_Layout, MAX_ROWS);
+			break;
+
+			case 2: // Make seat reservations
+			reserve_Seats(seatLetters, aircraft_Layout, MAX_ROWS);
+			break;
+
+			case 3: // Show help
+
+			break;
+
+			case 4: // Exit
+
+			break;
+
+			default:
+			cout << "  Invalid input. Please try again." << endl;
+			break;
+		} // End of SWITCH
+
+	} while (choice != 4);
+
+	return 0;
+} // End of main()
+
+void print_Aircraft_Layout(char letters[], char matrix[][MAX_COLS], int MAX_ROWS) // Outputs the CURRENT seating chart
+{
+	int row, col, n = 1;
+
+	cout << " Seating plan for flight number 666." << endl;
+	cout << " '*' indicates an available seat. 'X' indicates seat is reserved and unavailable." << endl;
+
+	cout << endl;
+	cout << "\t";
+	for (int i = 0; i < MAX_COLS; i++) // Seat Letters as Column Headers
+	{
+		cout << letters[i] << "\t";
+	}
+	cout << "\n" << endl;
+
+	for (row = 0; row < MAX_ROWS; row++)
+	{
+		cout << "Row " << n << "\t";
+		for (col = 0; col < MAX_COLS; col++)
+		{
+			cout << matrix[row][col] << "\t";
+		}
+		cout << endl;
+		n++;
+	}
+
+	cout << endl;
+	cout << "  Rows 1 and 2 are reserved for FIRST CLASS ticket holders" << endl;
+	cout << "  Rows 3 through 7 are reserved for BUISNESS CLASS ticket holders" << endl;
+	cout << "  Rows 8 through 13 are for ECONOMY ticket holders" << endl;
+}  
+
+void reserve_Seats(const char letters[], char matrix[][MAX_COLS], int MAX_ROWS)
+{
+	char seatClass, seatLetter, choice;
+	char reserved = 'X';
+	int rowNum, seatIndex;
+	bool valid = false;
+
+	do
+	{
+		reserve_Menu();
+		cin >> seatClass;
+
+		switch (static_cast<char>(toupper(seatClass)))
+		{
+			case 'F':
+			do
+			{
+				print_Aircraft_Layout(letters, matrix, MAX_ROWS);
+				cout << " Reserve seat selection by entering the row number followed by seat letter. " << endl;
+				do
+				{
+					cout << " Row number: >> ";
+					cin >> rowNum;
+					if (rowNum > 0 && rowNum <= 13)
+					{
+						valid = true;
+					}
+					else
+					{
+						cout << " Invalid input. Please try again." << endl;
+					}
+				} while (!valid);
+
+				valid = false;
+				do
+				{
+					cout << endl << " Seat letter: >> ";
+					cin >> seatLetter;
+					seatLetter = static_cast<char>(toupper(seatLetter));
+					seatIndex = seqSearch(letters, MAX_COLS, seatLetter);
+					if (seatIndex > 0 && seatIndex <= 13)
+					{
+						valid = true;
+					}
+					else
+					{
+						cout << " Invalid input. Please try again." << endl;
+					}
+				} while (!valid);
+
+				if (rowNum == 1 || rowNum == 2)
+				{
+					matrix[rowNum][seatIndex] = reserved;
+					print_Aircraft_Layout(letters, matrix, MAX_ROWS);
+					cout << " Your seat has been reserved." << endl;
+					cout << " Would you like to reserve another? 'Y' or 'N': >> ";
+					cin >> choice;
+				}
+				else
+				{
+					cout << " The seat you have selected is not located in First Class." << endl;
+					cout << " Enter 'C' to continue reservation or 'X' to select a different seat: >> ";
+					cin >> choice;
+				}
+
+			} while (true);
+			
+			if (rowNum != 1 || rowNum != 2)
+			{
+
+			}
+			break;
+			case 'B':
+			case 'E':
+			do
+			{
+				print_Aircraft_Layout(letters, matrix, MAX_ROWS);
+				cout << " Reserve seat selection by entering the row number followed by seat letter. " << endl;
+				do
+				{
+					cout << " Row number: >> ";
+					cin >> rowNum;
+					if (rowNum > 0 && rowNum <= 13)
+					{
+						valid = true;
+					}
+					else
+					{
+						cout << " Invalid input. Please try again." << endl;
+					}
+				} while (!valid);
+				valid = false;
+				do
+				{
+					cout << endl << " Seat letter: >> ";
+					cin >> seatLetter;
+					seatLetter = static_cast<char>(toupper(seatLetter));
+					seatIndex = seqSearch(letters, MAX_COLS, seatLetter);
+					if (seatIndex > 0 && seatIndex <= 13)
+					{
+						valid = true;
+					}
+					else
+					{
+						cout << " Invalid input. Please try again." << endl;
+					}
+				} while (!valid);
+
+			} while (true);
+			
+			
+			
+
+			
+			
+			
+			
+			
+
+			
+			
+
+
+
+			break;
+
+			case 'X':
+			break;
+			default:
+			cout << " Invalid input. Please try again." << endl;
+			break;
+		}
+		
+		
+
+	} while (seatClass != 'X');
+}
+
+void main_Menu() // Main menu options
+{
+	cout << endl;
+	cout << "    Welcome to Fictitious Airways' Seat picker App!\n" << endl;
+	cout << "\t1 -- Current aircraft seating plan\n" << endl;
+	cout << "\t2 -- Make seat reservations\n" << endl;
+	cout << "\t3 -- Help\n" << endl;
+	cout << "\t4 -- Exit application\n" << endl;
+	cout << "  Select a menu item:  >> ";
+}
+
+void reserve_Menu() // Reserve menu options
+{
+	cout << "  Select your class: \n" << endl;
+	cout << "\tF -- First Class\n" << endl;
+	cout << "\tB -- Buisness Class\n" << endl;
+	cout << "\tE -- Economy Class\n" << endl;
+	cout << "\tX -- Return to main menu\n" << endl;
+	cout << "  Selection:  >> " << endl;
+}
+
+int seqSearch(const char list[], int length, char searchItem)
+{
+	bool found = false;
+	int index = 0;
+	while (index < length && !found)
+	{
+		if (list[index] == searchItem)
+		{
+			found = true;
+		}
+		else
+		{
+			index++;
+		}
+	}
+	if (found)
+	{
+		return index;
+	}
+	else
+	{
+		return -1;
+	}
 }
 
 // Run program: Ctrl + F5 or Debug > Start Without Debugging menu
