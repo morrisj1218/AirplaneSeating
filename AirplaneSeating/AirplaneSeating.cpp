@@ -1,7 +1,7 @@
 // AirplaneSeating.cpp : This file contains the 'main' function. Program execution begins and ends there.
 // Programmer:		Jack Morris
 // Course:			ITSE-xxxx Intro to C++
-// Description:		
+// Description:
 // Date:			30/30/2019
 
 #include "pch.h"
@@ -14,18 +14,18 @@ using namespace std;
 const int MAX_ROWS = 13;
 const int MAX_COLS = 6;
 
-void print_Aircraft_Layout(const char letters[], const char matrix[][MAX_COLS], int MAX_ROWS); // Outputs CURRENT seating chart
-void reserve_Seats(const char letters[], char matrix[][MAX_COLS], int MAX_ROWS);
+void print_Aircraft_Layout(const char colHeaders[], const char matrix[][MAX_COLS], int MAX_ROWS); // Outputs CURRENT seating chart
+void reserve_Seats(const char colHeaders[], char matrix[][MAX_COLS], int MAX_ROWS);
 void main_Menu();
 void reserve_Menu();
 int seqSearch(const char list[], int length, char searchItem);
 
 int main()
 {
-	int choice;
 	char aircraft_Layout[MAX_ROWS][MAX_COLS];
-	char seatLetters[MAX_COLS] = { 'A','B','C','D','E','F' };
-	char available = '*';
+	char seatColumns[MAX_COLS] = { 'A','B','C','D','E','F' };
+	char available = '*'; // AVAILABLE seat designator
+	int choice;
 
 	for (int row = 0; row < MAX_ROWS; row++) // Initialize aircraft_Layout with all seats empty
 	{
@@ -44,11 +44,11 @@ int main()
 		switch (choice)
 		{
 			case 1: // Show current seating chart
-			print_Aircraft_Layout(seatLetters, aircraft_Layout, MAX_ROWS);
+			print_Aircraft_Layout(seatColumns, aircraft_Layout, MAX_ROWS);
 			break;
 
 			case 2: // Make seat reservations
-			reserve_Seats(seatLetters, aircraft_Layout, MAX_ROWS);
+			reserve_Seats(seatColumns, aircraft_Layout, MAX_ROWS);
 			break;
 
 			case 3: // Show help
@@ -69,18 +69,18 @@ int main()
 	return 0;
 } // End of main()
 
-void print_Aircraft_Layout(char letters[], char matrix[][MAX_COLS], int MAX_ROWS) // Outputs the CURRENT seating chart
+void print_Aircraft_Layout(const char colHeaders[], const char matrix[][MAX_COLS], int MAX_ROWS) // Outputs the CURRENT seating chart
 {
 	int row, col, n = 1;
 
 	cout << " Seating plan for flight number 666." << endl;
 	cout << " '*' indicates an available seat. 'X' indicates seat is reserved and unavailable." << endl;
-
 	cout << endl;
+
 	cout << "\t";
-	for (int i = 0; i < MAX_COLS; i++) // Seat Letters as Column Headers
+	for (int i = 0; i < MAX_COLS; i++)
 	{
-		cout << letters[i] << "\t";
+		cout << colHeaders[i] << "\t";
 	}
 	cout << "\n" << endl;
 
@@ -94,16 +94,15 @@ void print_Aircraft_Layout(char letters[], char matrix[][MAX_COLS], int MAX_ROWS
 		cout << endl;
 		n++;
 	}
-
 	cout << endl;
 	cout << "  Rows 1 and 2 are reserved for FIRST CLASS ticket holders" << endl;
 	cout << "  Rows 3 through 7 are reserved for BUISNESS CLASS ticket holders" << endl;
 	cout << "  Rows 8 through 13 are for ECONOMY ticket holders" << endl;
-}  
+}
 
-void reserve_Seats(const char letters[], char matrix[][MAX_COLS], int MAX_ROWS)
+void reserve_Seats(const char colHeaders[], char matrix[][MAX_COLS], int MAX_ROWS)
 {
-	char seatClass, seatLetter, choice;
+	char classDesignator, seat_Selection;
 	char reserved = 'X';
 	int rowNum, seatIndex;
 	bool valid = false;
@@ -111,28 +110,39 @@ void reserve_Seats(const char letters[], char matrix[][MAX_COLS], int MAX_ROWS)
 	do
 	{
 		reserve_Menu();
-		cin >> seatClass;
+		cin.get(classDesignator);
+		classDesignator = static_cast<char>(toupper(classDesignator));
 
-		switch (static_cast<char>(toupper(seatClass)))
+		switch (classDesignator)
 		{
 			case 'F':
 			do
 			{
-				print_Aircraft_Layout(letters, matrix, MAX_ROWS);
-				cout << " Reserve seat selection by entering the row number followed by seat letter. " << endl;
-				do
+				print_Aircraft_Layout(colHeaders, matrix, MAX_ROWS);
+				cout << " To reserve seat type Row number followed by seat's letter and press 'Enter': >> " << endl;
+				cin >> rowNum;
+				cin.get(seat_Selection);
+				seat_Selection = static_cast<char>(toupper(seat_Selection));
+
+				if (rowNum == 1 || rowNum == 2)
 				{
-					cout << " Row number: >> ";
-					cin >> rowNum;
-					if (rowNum > 0 && rowNum <= 13)
+					seatIndex = seqSearch(colHeaders, MAX_COLS, seat_Selection);
+					if (seatIndex != -1)
 					{
-						valid = true;
+						if (matrix[rowNum][seatIndex] != reserved)
+						{
+							matrix[rowNum][seatIndex] = reserved;
+							valid = true;
+						}
+						else
+						{
+							cout << " Seat " << rowNum << seat_Selection << " has already been reserved. " << endl;
+						}
 					}
-					else
-					{
-						cout << " Invalid input. Please try again." << endl;
-					}
-				} while (!valid);
+
+				}
+
+			} while (!valid);
 
 				valid = false;
 				do
@@ -167,7 +177,7 @@ void reserve_Seats(const char letters[], char matrix[][MAX_COLS], int MAX_ROWS)
 				}
 
 			} while (true);
-			
+
 			if (rowNum != 1 || rowNum != 2)
 			{
 
@@ -210,18 +220,18 @@ void reserve_Seats(const char letters[], char matrix[][MAX_COLS], int MAX_ROWS)
 				} while (!valid);
 
 			} while (true);
-			
-			
-			
 
-			
-			
-			
-			
-			
 
-			
-			
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -233,10 +243,10 @@ void reserve_Seats(const char letters[], char matrix[][MAX_COLS], int MAX_ROWS)
 			cout << " Invalid input. Please try again." << endl;
 			break;
 		}
-		
-		
 
-	} while (seatClass != 'X');
+
+
+	} while (classDesignator != 'X');
 }
 
 void main_Menu() // Main menu options
@@ -247,7 +257,7 @@ void main_Menu() // Main menu options
 	cout << "\t2 -- Make seat reservations\n" << endl;
 	cout << "\t3 -- Help\n" << endl;
 	cout << "\t4 -- Exit application\n" << endl;
-	cout << "  Select a menu item:  >> ";
+	cout << "  Select a menu item: >> ";
 }
 
 void reserve_Menu() // Reserve menu options
@@ -288,7 +298,7 @@ int seqSearch(const char list[], int length, char searchItem)
 // Run program: Ctrl + F5 or Debug > Start Without Debugging menu
 // Debug program: F5 or Debug > Start Debugging menu
 
-// Tips for Getting Started: 
+// Tips for Getting Started:
 //   1. Use the Solution Explorer window to add/manage files
 //   2. Use the Team Explorer window to connect to source control
 //   3. Use the Output window to see build output and other messages
