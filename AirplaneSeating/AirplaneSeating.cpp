@@ -141,15 +141,30 @@ void reserve_Seats(const char colHeaders[], char matrix[][MAX_COLS], int MAX_ROW
 					{
 						if (seatIndex = -1)
 						{
+<<<<<<< HEAD
 							cout << seat_Selection << " is not a valid seat identifier. Please try again." << endl;
 						}
 						else
 						{
 							cout << " Seat " << rowNum << seat_Selection << " has already been reserved." << endl;
 							cout << " Please select a seat that is marked available (*)." << endl;
+=======
+							matrix[rowNum][seatIndex] = reserved;
+							valid = true;
+							cout << " Congratulations! You reservation was successful and you can see below
+												the flight's seating chart has already been update."<< endl;
+							cout << " Would you like to make another reservation?: >> ";
+							cin >> choice;
+						}
+						else // If seat is already reserved.
+            {
+							cout << " Seat " << rowNum << seat_Selection << " has already been reserved. " << endl;
+							cout << " You wil now be redirctd to select an available seat" << endl;
+>>>>>>> 396a1f691774e781f65696284c85e7456f7078ba
 						}
 						
 					}
+<<<<<<< HEAD
 				}
 				else
 				{
@@ -166,6 +181,22 @@ void reserve_Seats(const char colHeaders[], char matrix[][MAX_COLS], int MAX_ROW
 				cin >> rowNum;
 				cin.get(seat_Selection);
 				seat_Selection = static_cast<char>(toupper(seat_Selection));
+=======
+          else
+          {
+							cout << "  Invalid seat selection. Please try again." << endl;
+          }
+				}
+        else
+        {
+						cout << " The seat you have selected to revserve is not located in First Class. " << endl;
+						cout << " Would you like to continue ('C') with you seat reservation or chooese another?('20')
+						<< endl;
+						cin >> choice;
+        }
+
+ 			while (!valid);
+>>>>>>> 396a1f691774e781f65696284c85e7456f7078ba
 
 				if (rowNum >=3 && rowNum <= 7)
 				{
