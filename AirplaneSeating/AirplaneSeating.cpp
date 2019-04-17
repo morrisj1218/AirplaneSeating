@@ -1,13 +1,14 @@
 // AirplaneSeating.cpp : This file contains the 'main' function. Program execution begins and ends there.
 // Programmer:		Jack Morris
-// Course:			ITSE-xxxx Intro to C++
-// Description:
-// Date:			30/30/2019
+// Course:			ITSE-1307 Intro to C++
+// Description:		Application mimics an airline's seat reservation system for commercial flights 
+// Date:			Successful test on 04/17/2019
 
 #include "pch.h"
 #include <iostream>
 #include <iomanip>
-#include <cctype>
+#include <ctype.h>
+#include <string>
 
 using namespace std;
 
@@ -16,6 +17,7 @@ const int MAX_COLS = 6;
 
 void print_Aircraft_Layout(const char colHeaders[], const char matrix[][MAX_COLS], int MAX_ROWS); // Outputs CURRENT seating chart
 void reserve_Seats(const char colHeaders[], char matrix[][MAX_COLS], int MAX_ROWS);
+void show_Help();
 void main_Menu();
 void reserve_Menu();
 int seqSearch(const char list[], int length, char searchItem);
@@ -52,11 +54,10 @@ int main()
 			break;
 
 			case 3: // Show help
-
+			show_Help();
 			break;
 
 			case 4: // Exit
-
 			break;
 
 			default:
@@ -103,7 +104,7 @@ void print_Aircraft_Layout(const char colHeaders[], const char matrix[][MAX_COLS
 
 void reserve_Seats(const char colHeaders[], char matrix[][MAX_COLS], int MAX_ROWS)
 {
-	char class_ID;
+	char section_ID;
 	char seat_ID;
 	char y_or_n;
 	char reserved = 'X';
@@ -112,51 +113,60 @@ void reserve_Seats(const char colHeaders[], char matrix[][MAX_COLS], int MAX_ROW
 
 	do {
 		reserve_Menu();
-		cin >> class_ID;
-		class_ID = static_cast<char>(toupper(class_ID));
+		cin >> section_ID;
+		section_ID = toupper(section_ID);
 
-		switch (class_ID) {
+		switch (section_ID) {
 			case 'F':
 			do {
 				y_or_n = 'N';
 				print_Aircraft_Layout(colHeaders, matrix, MAX_ROWS);
-				cout << " Select which seat you would like to reserve: >> ";
+				cout << endl;
+				cout << " Select which seat you would like to reserve in FIRST CLASS: >> ";
 				cin >> rowNum >> seat_ID;
 				cout << endl;
 				rowNum--;
-				seat_ID = static_cast<char>(toupper(seat_ID));
+				seat_ID = toupper(seat_ID);
 				seatIndex = seqSearch(colHeaders, MAX_COLS, seat_ID);
 
 				if (seatIndex < 0) 
 				{
+					cout << endl;
 					cout << " Invalid input for seat. Please try again." << endl;
 					y_or_n = 'Y';
 				}
 
-				if ((rowNum < 0 || rowNum > 1) && y_or_n != 'Y') 
+				if (y_or_n != 'Y')
 				{
-					cout << " The seat you have selected is not located in FIRST CLASS." << endl;
-					cout << " Would you like to choose a different seat.? 'Y' or 'N': >> ";
-					cin >> y_or_n;
-					cout << endl;
-					y_or_n = static_cast<char>(toupper(y_or_n));
+					if (rowNum < 0 || rowNum > 1)
+					{
+						cout << endl;
+						cout << " The seat you have selected is not located in FIRST CLASS." << endl;
+						cout << " Would you like to choose a different seat? 'Y' or 'N': >> ";
+						cin >> y_or_n;
+						y_or_n = toupper(y_or_n);
+						cout << endl;
+					}
 				}
-
+				
 				if (y_or_n != 'Y') 
 				{
 					if (matrix[rowNum][seatIndex] != reserved) 
 					{
 						matrix[rowNum][seatIndex] = reserved;
 						print_Aircraft_Layout(colHeaders, matrix, MAX_ROWS);
+						cout << endl;
 						cout << " Congratulations on a successful reservation." << endl;
-						cout << " Would you like to reserve another? 'Y' or 'N': >> ";
+						cout << " Would you like to reserve another seat? 'Y' or 'N': >> ";
 						cin >> y_or_n;
-						y_or_n = static_cast<char>(toupper(y_or_n));
+						y_or_n = toupper(y_or_n);
 
 					} else 
 					{
+						rowNum++;
 						cout << "  " << rowNum << seat_ID << " is NOT AVAILABLE." << endl;
 						cout << " Please select a seat that is marked AVAILABLE('*')." << endl;
+						cout << endl;
 						y_or_n = 'Y';
 					}
 				}
@@ -168,98 +178,116 @@ void reserve_Seats(const char colHeaders[], char matrix[][MAX_COLS], int MAX_ROW
 			do {
 				y_or_n = 'N';
 				print_Aircraft_Layout(colHeaders, matrix, MAX_ROWS);
-				cout << " Select which seat you would like to reserve: >> ";
+				cout << endl;
+				cout << " Select which seat you would like to reserve in BUISNESS CLASS: >> ";
 				cin >> rowNum >> seat_ID;
 				cout << endl;
 				rowNum--;
-				seat_ID = static_cast<char>(toupper(seat_ID));
+				seat_ID = toupper(seat_ID);
 				seatIndex = seqSearch(colHeaders, MAX_COLS, seat_ID);
 
-				if (seatIndex < 0) 
+				if (seatIndex < 0)
 				{
+					cout << endl;
 					cout << " Invalid input for seat. Please try again." << endl;
 					y_or_n = 'Y';
 				}
 
-				if ((rowNum < 2 || rowNum > 6) && y_or_n != 'Y') 
+				if (y_or_n != 'Y')
 				{
-					cout << " The seat you have selected is not located in BUISNESS CLASS." << endl;
-					cout << " Would you like to choose a different seat.? 'Y' or 'N': >> ";
-					cin >> y_or_n;
-					cout << endl;
-					y_or_n = static_cast<char>(toupper(y_or_n));
+					if (rowNum < 2 || rowNum > 6)
+					{
+						cout << endl;
+						cout << " The seat you have selected is not located in BUISNESS CLASS." << endl;
+						cout << " Would you like to choose a different seat? 'Y' or 'N': >> ";
+						cin >> y_or_n;
+						y_or_n = toupper(y_or_n);
+						cout << endl;
+					}
 				}
 
-				if (y_or_n != 'Y') 
+				if (y_or_n != 'Y')
 				{
-					if (matrix[rowNum][seatIndex] != reserved) 
+					if (matrix[rowNum][seatIndex] != reserved)
 					{
 						matrix[rowNum][seatIndex] = reserved;
 						print_Aircraft_Layout(colHeaders, matrix, MAX_ROWS);
-						cout << " Congratulations on a successful reservation." << endl;
-						cout << " Would you like to reserve another? 'Y' or 'N': >> ";
-						cin >> y_or_n;
 						cout << endl;
-						y_or_n = static_cast<char>(toupper(y_or_n));
+						cout << " Congratulations on a successful reservation." << endl;
+						cout << " Would you like to reserve another seat? 'Y' or 'N': >> ";
+						cin >> y_or_n;
+						y_or_n = toupper(y_or_n);
 
-					} else 
+					}
+					else
 					{
+						rowNum++;
 						cout << "  " << rowNum << seat_ID << " is NOT AVAILABLE." << endl;
 						cout << " Please select a seat that is marked AVAILABLE('*')." << endl;
+						cout << endl;
 						y_or_n = 'Y';
 					}
 				}
 
-			} while(y_or_n == 'Y');
+			} while (y_or_n == 'Y');
 			break;
 
 			case 'E':
 			do {
 				y_or_n = 'N';
 				print_Aircraft_Layout(colHeaders, matrix, MAX_ROWS);
-				cout << " Select which seat you would like to reserve: >> ";
-				cin >> rowNum;
-				cin >> seat_ID;
+				cout << endl;
+				cout << " Select which seat you would like to reserve in ECONOMY CLASS: >> ";
+				cin >> rowNum >> seat_ID;
 				cout << endl;
 				rowNum--;
-				seat_ID = static_cast<char>(toupper(seat_ID));
+				seat_ID = toupper(seat_ID);
 				seatIndex = seqSearch(colHeaders, MAX_COLS, seat_ID);
 
-				if (seatIndex < 0) 
+				if (seatIndex < 0)
 				{
+					cout << endl;
 					cout << " Invalid input for seat. Please try again." << endl;
 					y_or_n = 'Y';
 				}
 
-				if ((rowNum < 7 || rowNum > 12) && y_or_n != 'Y') 
+				if (y_or_n != 'Y')
 				{
-					cout << " The seat you have selected is not located in ECONOMY CLASS." << endl;
-					cout << " Would you like to choose a different seat.? 'Y' or 'N': >> ";
-					cin >> y_or_n;
-					cout << endl;
-					y_or_n = static_cast<char>(toupper(y_or_n));
+					if (rowNum < 7 || rowNum > 12)
+					{
+						cout << endl;
+						cout << " The seat you have selected is not located in ECONOMY." << endl;
+						cout << " Would you like to choose a different seat? 'Y' or 'N': >> ";
+						cin >> y_or_n;
+						y_or_n = toupper(y_or_n);
+						cout << endl;
+					}
 				}
 
-				if (y_or_n != 'Y') 
+				if (y_or_n != 'Y')
 				{
-					if (matrix[rowNum][seatIndex] != reserved) 
+					if (matrix[rowNum][seatIndex] != reserved)
 					{
 						matrix[rowNum][seatIndex] = reserved;
 						print_Aircraft_Layout(colHeaders, matrix, MAX_ROWS);
-						cout << " Congratulations on a successful reservation." << endl;
-						cout << " Would you like to reserve another? 'Y' or 'N': >> ";
-						cin >> y_or_n;
 						cout << endl;
-						y_or_n = static_cast<char>(toupper(y_or_n));
+						cout << " Congratulations on a successful reservation." << endl;
+						cout << " Would you like to reserve another seat? 'Y' or 'N': >> ";
+						cin >> y_or_n;
+						y_or_n = toupper(y_or_n);
 
-					} else 
+					}
+					else
 					{
+						rowNum++;
 						cout << "  " << rowNum << seat_ID << " is NOT AVAILABLE." << endl;
 						cout << " Please select a seat that is marked AVAILABLE('*')." << endl;
+						cout << endl;
 						y_or_n = 'Y';
 					}
 				}
-			} while(y_or_n == 'Y');
+
+			} while (y_or_n == 'Y');
 			break;
 
 			case 'X':
@@ -269,8 +297,18 @@ void reserve_Seats(const char colHeaders[], char matrix[][MAX_COLS], int MAX_ROW
 			cout << " Invalid input. Please try again." << endl;
 			break;
 		}
-	} while(class_ID != 'X');
+	} while(section_ID != 'X');
 }
+
+void show_Help()
+{
+	cout << endl;
+	cout << "Follow the instructions within the various menus" << endl;
+	cout << "IMPORTANT when selecting a seat to reserve be sure to reference" << endl;
+	cout << "the row number first followed by seat letter together! (i.e. 4B for Row 4 Seat B)" << endl;
+	cout << endl;
+}
+
 void main_Menu() // Main menu options
 {
 	cout << endl;
